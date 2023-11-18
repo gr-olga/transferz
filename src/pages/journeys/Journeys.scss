@@ -1,0 +1,51 @@
+.content {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-around;
+  gap: 20px;
+  margin: auto;
+
+
+  .main-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 1em;
+      font-family: inherit;
+    }
+  }
+
+  .filtration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .journeys {
+
+  }
+
+  .greeting {
+    font-size: 36px;
+    font-weight: 500;
+    color: #3c4b64;
+  }
+
+  .input {
+    padding: 1px 2px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    width: 100%;
+  }
+}

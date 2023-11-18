@@ -1,0 +1,3 @@
+export const API_URL = "https://womxdnlawmxpzfkgjdbj.supabase.co/graphql/v1";
+export const API_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvbXhkbmxhd214cHpma2dqZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwNDI0NzQsImV4cCI6MjAxNTYxODQ3NH0.vUhucyqOyro5XY3QyG2mK5O2ij91x44q6jFzMouUCCE";

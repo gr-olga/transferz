@@ -1,0 +1,30 @@
+.header {
+  background-color: #3c4b64;
+  min-height: 100px;
+  padding: 0 32px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: stretch;
+  color: white;
+
+  * {
+    flex-grow: 0;
+  }
+
+  nav {
+    flex-grow: 1;
+    ul {
+      display: flex;
+      gap: 16px;
+      flex-direction: row;
+      list-style: none;
+
+      a {
+        color: white;
+        font-size: 115%;
+      }
+    }
+  }
+}
