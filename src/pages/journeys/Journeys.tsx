@@ -55,7 +55,7 @@ export default function Journeys() {
     const [insertIntojourneyCollection] = useMutation(ADD_DATA_MUTATION);
     const [sort, setSort] = useState('');
     const [search, setSearch] = useState('')
-    const [filteredJourneyData, setFilteredJourneyData] = useState([]);
+    const [filteredJourneyData, setFilteredJourneyData] = useState([] as Journey[]);
     const [newJourneyData, setNewJourneyData] = useState({
         from_address: '',
         to_address: '',
@@ -77,10 +77,9 @@ export default function Journeys() {
     }) => journey.node) ?? [];
 
     useEffect(() => {
-            let filtered = [];
+            let filtered: Journey[] = [];
             if (search) {
-                filtered = journeysData.filter((journey: Journey) =>
-                    journey.traveller_info.first_name.toLowerCase().includes(search) || journey.traveller_info.last_name.toLowerCase().includes(search)
+                filtered = journeysData.filter((journey: Journey) => journey.traveller_info.first_name.toLowerCase().includes(search.toLowerCase()) || journey.traveller_info.last_name.toLowerCase().includes(search.toLowerCase())
                 );
             }
             if (sort === 'PENDING' || sort === 'COMPLETED') {
