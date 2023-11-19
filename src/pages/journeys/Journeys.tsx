@@ -24,36 +24,49 @@ const journeysInfoQuery = gql`
   }
 `;
 
-//
-// const DELETE_ITEM_MUTATION = gql`
-//   mutation deleteFromjourneyCollection(){
-//     id: UUID
-//     }
-// `;
+const DELETE_JOURNEY_MUTATION = gql`
+    mutation DeleteFromJourneyCollection($filter: JourneyFilter!, $atMost: Int!) {
+        deleteFromJourneyCollection(filter: $UUIDFilter, atMost: $atMost) {
+           id
+        }
+    }
+`;
+
 
 const ADD_DATA_MUTATION = gql`
-    mutation insertIntojourneyCollection($type: journeyInput!) {
-      id: UUID
+   mutation InsertIntoJourneyCollection($objects: [JourneyInsertInput!]!) {
+        insertIntojourneyCollection(objects: $objects) {     
 created_at
 from_address
 to_address
 fare
 inbound
-traveller_info
-status
+traveller_info {
+id
+}
+
+    }
     }
 `;
 
 export default function Journeys() {
     const {data: journeysInfoResult} = useQuery(journeysInfoQuery);
-    // const [deleteFromjourneyCollection] = useMutation(DELETE_ITEM_MUTATION);
+    const [deleteFromjourneyCollection] = useMutation(DELETE_JOURNEY_MUTATION);
     const [insertIntojourneyCollection] = useMutation(ADD_DATA_MUTATION);
     const [sort, setSort] = useState('');
     const [search, setSearch] = useState('')
     const [filteredJourneyData, setFilteredJourneyData] = useState([]);
-    const [from_address, setFrom_address] = useState('');
-    const [to_address, setTo_address] = useState('');
-    const [traveller_name, setTraveller_name] = useState('');
+    const [newJourneyData, setNewJourneyData] = useState({
+        from_address: '',
+        to_address: '',
+        fare: '0',
+        inbound: true,
+        status: 'PENDING',
+        created_at: '2021-09-01T00:00:00.000Z',
+        traveller_info: {
+            id: 'e39d35ab-ecca-483d-908e-7ce22987ae92',
+        }
+    });
     const changeSorting = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSort(event.target.value);
     }
@@ -64,26 +77,40 @@ export default function Journeys() {
     }) => journey.node) ?? [];
 
     useEffect(() => {
-            let filtered = journeysData;
+            let filtered = [];
             if (search) {
-                filtered = filtered.filter((journey: Journey) =>
+                filtered = journeysData.filter((journey: Journey) =>
                     journey.traveller_info.first_name.toLowerCase().includes(search) || journey.traveller_info.last_name.toLowerCase().includes(search)
                 );
             }
             if (sort === 'PENDING' || sort === 'COMPLETED') {
-                filtered = filtered.filter((journey: Journey) => journey.status === sort);
+                filtered = journeysData.filter((journey: Journey) => journey.status === sort);
             }
 
             setFilteredJourneyData(filtered);
         },
-        [sort, search, journeysData]
+        [sort, search]
     )
     const removeJourney = (id: string) => {
+        deleteFromjourneyCollection({
+            variables: {
+                filter: {id},
+                atMost: 1
+            }
+        })
         console.log('delete', id)
     }
-    const addJourney = (from_address: string,
-                        to_address: string, traveller_name: string) => {
-        console.log('add', from_address, to_address, traveller_name)
+
+    type journeyInfo = {
+        from_address: string,
+        to_address: string,
+        traveller_info: {
+            id: string,
+        }
+    }
+    const addJourney = (newJourneyData: journeyInfo) => {
+        insertIntojourneyCollection({variables: {objects: [newJourneyData]}})
+        console.log('add', newJourneyData)
     }
 
     return (
@@ -103,29 +130,29 @@ export default function Journeys() {
 
             <div className="journeys">
                 <p className="greeting">Journeys</p>
-                {filteredJourneyData.map((journey: Journey) => {
+                {(filteredJourneyData.length > 0 ? filteredJourneyData : journeysData).map((journey: Journey) => {
                     return (
                         <div className="journey" key={journey.id}>
-
-                            <div className="journey__from_address">
-                                <span>From</span>
-                                <p> {journey.from_address}</p>
+                            <div className="journey__detail">
+                                <span>from</span>
+                                <p className={`${journey.inbound ? 'text' : 'inbound_text'}`}>{journey.from_address}</p>
                             </div>
-                            <div className="journey__inbound">{String(journey.inbound)}</div>
-
-                            <div className="journey__to_address">
+                            <div className="journey__detail">
                                 <span>to</span>
-                                <p>  {journey.to_address}</p>
+                                <p className='text'> {journey.to_address}</p>
                             </div>
 
-                            <div className="journey__status">
-                                <span>status:</span>
-                                <p>  {journey.status}</p>
+                            <div className="journey__detail">
+                                <span>Status:</span>
+                                <p className='text'> {journey.status}</p>
                             </div>
                             <div
-                                className="journey__traveller_info">{journey.traveller_info.first_name} {journey.traveller_info.last_name}</div>
+                                className="journey__detail">
+                                <span>Traveler:</span>
+                                <p className='text'>{journey.traveller_info.first_name} {journey.traveller_info.last_name}</p>
+                            </div>
                             {journey.status === 'COMPLETED' ?
-                                <button onClick={() => removeJourney(journey.id)}>Remove</button>
+                                <button className='btn' onClick={() => removeJourney(journey.id)}>Remove</button>
                                 : null}
                         </div>
                     )
@@ -140,18 +167,15 @@ export default function Journeys() {
                     className="form"
                     onSubmit={e => {
                         e.preventDefault();
-                        addJourney(from_address, to_address, traveller_name)
+                        addJourney(newJourneyData)
                     }}
                 >
                     <label htmlFor="from_address">Add start address:</label>
-                    <input className='input' name='from_address' value={from_address}
-                           onChange={(e) => setFrom_address(e.target.value)}/>
+                    <input className='input' name='from_address' value={newJourneyData.from_address}
+                           onChange={(e) => setNewJourneyData({...newJourneyData, from_address: e.target.value})}/>
                     <label htmlFor="to_address">Add end address:</label>
-                    <input className='input' name='to_address' value={to_address}
-                           onChange={(e) => setTo_address(e.target.value)}/>
-                    <label htmlFor="name">Add traveller name:</label>
-                    <input className='input' name='traveller_name' value={traveller_name}
-                           onChange={(e) => setTraveller_name(e.target.value)}/>
+                    <input className='input' name='to_address' value={newJourneyData.to_address}
+                           onChange={(e) => setNewJourneyData({...newJourneyData, to_address: e.target.value})}/>
                     <button type="submit">Submit</button>
                 </form>
             </div>

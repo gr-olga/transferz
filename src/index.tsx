@@ -13,7 +13,6 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 
-console.log("apolloClient", apolloClient);
 root.render(
   <React.StrictMode>
     <ApolloProvider client={apolloClient}>
