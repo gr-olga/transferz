@@ -3,6 +3,11 @@ import {gql, useMutation, useQuery} from "@apollo/client";
 import {Journey} from "../../gql/graphql";
 import React, {useEffect, useState} from "react";
 
+enum Status {
+    ALL = 'ALL',
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED'
+}
 
 const journeysInfoQuery = gql`
 {
@@ -61,7 +66,7 @@ export default function Journeys() {
         to_address: '',
         fare: '0',
         inbound: true,
-        status: 'PENDING',
+        status: Status.PENDING,
         created_at: '2021-09-01T00:00:00.000Z',
         traveller_info: {
             id: 'e39d35ab-ecca-483d-908e-7ce22987ae92',
@@ -82,7 +87,7 @@ export default function Journeys() {
                 filtered = journeysData.filter((journey: Journey) => journey.traveller_info.first_name.toLowerCase().includes(search.toLowerCase()) || journey.traveller_info.last_name.toLowerCase().includes(search.toLowerCase())
                 );
             }
-            if (sort === 'PENDING' || sort === 'COMPLETED') {
+            if (sort === Status.PENDING || sort === Status.COMPLETED) {
                 filtered = journeysData.filter((journey: Journey) => journey.status === sort);
             }
 
@@ -101,6 +106,7 @@ export default function Journeys() {
         console.log('delete', id)
     }
 
+    //TODO would be nice to extract this type
     type journeyInfo = {
         from_address: string,
         to_address: string,
@@ -122,9 +128,9 @@ export default function Journeys() {
                 <p className="greeting">Search</p>
                 <p>Status</p>
                 <select name='status' onChange={changeSorting} value={sort}>
-                    <option value='ALL'>ALL</option>
-                    <option value='PENDING'>PENDING</option>
-                    <option value='COMPLETED'>COMPLETED</option>
+                    <option value={Status.ALL}>{Status.ALL}</option>
+                    <option value={Status.PENDING}>{Status.PENDING}</option>
+                    <option value={Status.COMPLETED}>{Status.COMPLETED}</option>
                 </select>
                 <label>Find by name</label>
                 <input className='input' value={search} onChange={handleChange} id="name" name={search} type={search}/>
@@ -154,7 +160,7 @@ export default function Journeys() {
                                 <span>Traveler:</span>
                                 <p className='text'>{journey.traveller_info.first_name} {journey.traveller_info.last_name}</p>
                             </div>
-                            {journey.status === 'COMPLETED' ?
+                            {journey.status === Status.COMPLETED ?
                                 <button className='btn' onClick={() => removeJourney(journey.id)}>Remove</button>
                                 : null}
                         </div>
