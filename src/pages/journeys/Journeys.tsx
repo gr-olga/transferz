@@ -97,6 +97,7 @@ export default function Journeys() {
                 atMost: 1
             }
         })
+        //TODO this is not a real deletion, just a mock
         console.log('delete', id)
     }
 
@@ -109,12 +110,14 @@ export default function Journeys() {
     }
     const addJourney = (newJourneyData: journeyInfo) => {
         insertIntojourneyCollection({variables: {objects: [newJourneyData]}})
+        //TODO this is not a real adding, just a mock
         console.log('add', newJourneyData)
     }
 
     return (
         <div className="content">
 
+            {/*//TODO this could be a distinct filter component*/}
             <div className="filtration">
                 <p className="greeting">Search</p>
                 <p>Status</p>
@@ -127,6 +130,7 @@ export default function Journeys() {
                 <input className='input' value={search} onChange={handleChange} id="name" name={search} type={search}/>
             </div>
 
+            {/*//TODO this could be a distinct list component*/}
             <div className="journeys">
                 <p className="greeting">Journeys</p>
                 {(filteredJourneyData.length > 0 ? filteredJourneyData : journeysData).map((journey: Journey) => {
@@ -159,7 +163,7 @@ export default function Journeys() {
                 }
             </div>
 
-
+            {/*//TODO this could be a distinct add journey component*/}
             <div className="main-form">
                 <p className="greeting">Add new journey</p>
                 <form
