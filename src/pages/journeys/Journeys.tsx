@@ -36,14 +36,14 @@ const DELETE_JOURNEY_MUTATION = gql`
 const ADD_DATA_MUTATION = gql`
    mutation InsertIntoJourneyCollection($objects: [JourneyInsertInput!]!) {
         insertIntojourneyCollection(objects: $objects) {     
-created_at
-from_address
-to_address
-fare
-inbound
-traveller_info {
-id
-}
+            created_at
+            from_address
+            to_address
+            fare
+            inbound
+            traveller_info {
+            id
+            }
 
     }
     }
